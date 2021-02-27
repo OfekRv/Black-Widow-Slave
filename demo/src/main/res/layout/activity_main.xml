@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+  xmlns:android="http://schemas.android.com/apk/res/android"
+  xmlns:app="http://schemas.android.com/apk/res-auto"
+  xmlns:tools="http://schemas.android.com/tools"
+  android:layout_width="match_parent"
+  android:layout_height="match_parent"
+  android:padding="4dp"
+  tools:context=".MainActivity">
+
+  <androidx.recyclerview.widget.RecyclerView
+    android:id="@+id/transcript"
+    android:layout_width="0dp"
+    android:layout_height="0dp"
+    app:layout_constraintBottom_toTopOf="@id/message"
+    app:layout_constraintEnd_toEndOf="parent"
+    app:layout_constraintStart_toStartOf="parent"
+    app:layout_constraintTop_toTopOf="parent" />
+
+  <EditText
+    android:id="@+id/message"
+    android:layout_width="0dp"
+    android:layout_height="wrap_content"
+    android:layout_marginTop="4dp"
+    android:layout_marginBottom="4dp"
+    android:hint="@string/messageHint"
+    android:importantForAutofill="no"
+    android:inputType="text"
+    app:layout_constraintBottom_toTopOf="@id/ultrasound"
+    app:layout_constraintEnd_toStartOf="@id/send"
+    app:layout_constraintStart_toStartOf="parent" />
+
+  <Button
+    android:id="@+id/send"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_marginStart="8dp"
+    android:layout_marginBottom="4dp"
+    android:enabled="false"
+    android:text="@string/send"
+    app:layout_constraintBottom_toBottomOf="@id/message"
+    app:layout_constraintEnd_toEndOf="parent"
+    app:layout_constraintTop_toTopOf="@id/message" />
+
+  <androidx.appcompat.widget.SwitchCompat
+    android:id="@+id/recording"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_marginBottom="4dp"
+    android:checked="false"
+    android:enabled="false"
+    android:text="@string/receive"
+    app:layout_constraintTop_toTopOf="@id/fast"
+    app:layout_constraintEnd_toEndOf="parent" />
+
+  <androidx.appcompat.widget.SwitchCompat
+    android:id="@+id/ultrasound"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_marginBottom="4dp"
+    android:checked="false"
+    android:enabled="false"
+    android:text="@string/ultrasound"
+    app:layout_constraintBottom_toTopOf="@id/fast"
+    app:layout_constraintStart_toStartOf="parent" />
+
+  <androidx.appcompat.widget.SwitchCompat
+    android:id="@+id/fast"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_marginBottom="4dp"
+    android:checked="false"
+    android:enabled="false"
+    android:text="@string/fast_mode"
+    app:layout_constraintBottom_toBottomOf="parent"
+    app:layout_constraintStart_toStartOf="parent" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

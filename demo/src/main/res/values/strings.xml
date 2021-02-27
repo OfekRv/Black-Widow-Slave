@@ -1,0 +1,8 @@
+<resources>
+  <string name="app_name">GGWeb</string>
+  <string name="send">Send</string>
+  <string name="receive">Receive Enabled</string>
+  <string name="messageHint">message to send</string>
+  <string name="ultrasound">Use Ultrasound</string>
+  <string name="fast_mode">Use Fast Mode</string>
+</resources>

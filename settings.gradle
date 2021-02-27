@@ -1,0 +1,3 @@
+include ':ggweb'
+include ':demo'
+rootProject.name = "GGWeb"
