@@ -38,14 +38,16 @@ import org.json.JSONObject
  * You need to request and hold the `RECORD_AUDIO` permission before creating an instance of this class. An
  * IllegalStateException will be thrown if you do not hold that permission.
  *
- * It is assumed that the `ggwave.html` file found in `assets/` of this module is included in your app in its
- * original location. If you move it, you will need to edit this class to match.
- *
  * @param[context] a `Context` suitable for creating a `WebView`
+ * @param[htmlLocation] Uri-style location to ggwave.html file (default = "file:///android_asset/ggwave.html")
  * @param[onReady] will be invoked when it is safe to start calling the other [GGWeb] functions
  */
 @SuppressLint("SetJavaScriptEnabled")
-class GGWeb(private val context: Context, onReady: () -> Unit) {
+class GGWeb(
+  private val context: Context,
+  private val htmlLocation: String = "file:///android_asset/ggwave.html",
+  onReady: () -> Unit
+) {
   private var channel: Array<WebMessagePort> = emptyArray()
   private val web: WebView = WebView(context)
   private var onMessage: (String) -> Unit = {}
@@ -80,7 +82,7 @@ class GGWeb(private val context: Context, onReady: () -> Unit) {
         }
       }
 
-      loadUrl("file:///android_asset/ggwave.html")
+      loadUrl(htmlLocation)
     }
   }
 
