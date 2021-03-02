@@ -46,7 +46,7 @@ import org.json.JSONObject
 class GGWeb(
   private val context: Context,
   private val htmlLocation: String = "file:///android_asset/ggwave.html",
-  onReady: () -> Unit
+  onReady: (GGWeb) -> Unit
 ) {
   private var channel: Array<WebMessagePort> = emptyArray()
   private val web: WebView = WebView(context)
@@ -78,7 +78,7 @@ class GGWeb(
       webViewClient = object : WebViewClient() {
         override fun onPageFinished(view: WebView, url: String) {
           initPort(view)
-          onReady()
+          onReady(this@GGWeb)
         }
       }
 
