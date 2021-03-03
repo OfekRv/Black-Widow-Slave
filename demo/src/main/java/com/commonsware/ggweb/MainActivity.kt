@@ -35,77 +35,77 @@ import com.commonsware.ggweb.databinding.ActivityMainBinding
 private const val PERM_AUDIO = 1337
 
 class MainActivity : AppCompatActivity() {
-  private val motor: MainMotor by viewModels()
-  private lateinit var gg: GGWeb
+    private val motor: MainMotor by viewModels()
+    private lateinit var gg: GGWeb
 
-  override fun onCreate(savedInstanceState: Bundle?) {
-    super.onCreate(savedInstanceState)
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
 
-    if (hasAudioPermission()) {
-      loadContent()
-    } else {
-      requestPermissions(arrayOf(Manifest.permission.RECORD_AUDIO), PERM_AUDIO)
-    }
-  }
-
-  override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
-    super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-
-    if (requestCode == PERM_AUDIO) {
-      if (hasAudioPermission()) {
-        loadContent()
-      } else {
-        Toast.makeText(this, "WTF?", Toast.LENGTH_LONG).show()
-        finish()
-      }
-    }
-  }
-
-  @SuppressLint("SetJavaScriptEnabled")
-  private fun loadContent() {
-    val binding = ActivityMainBinding.inflate(layoutInflater)
-
-    setContentView(binding.root)
-
-    gg = GGWeb(this) {
-      with(binding) {
-        send.isEnabled = true
-        recording.isEnabled = true
-        fast.isEnabled = true
-        ultrasound.isEnabled = true
-      }
+        if (hasAudioPermission()) {
+            loadContent()
+        } else {
+            requestPermissions(arrayOf(Manifest.permission.RECORD_AUDIO), PERM_AUDIO)
+        }
     }
 
-    binding.send.setOnClickListener {
-      val message = binding.message.text.toString()
+    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
 
-      if (message.isNotBlank()) {
-        binding.recording.isChecked =
-          false // TODO figure out how this ties into "SDK", as we need to stop recording before sending
-
-        gg.send(message, binding.ultrasound.isChecked, binding.fast.isChecked)
-        motor.addSentMessage(message)
-      }
+        if (requestCode == PERM_AUDIO) {
+            if (hasAudioPermission()) {
+                loadContent()
+            } else {
+                Toast.makeText(this, "WTF?", Toast.LENGTH_LONG).show()
+                finish()
+            }
+        }
     }
 
-    binding.recording.setOnCheckedChangeListener { _, isChecked ->
-      if (isChecked) {
-        gg.startRecording { motor.addReceivedMessage(it) }
-      } else {
-        gg.stopRecording()
-      }
+    @SuppressLint("SetJavaScriptEnabled")
+    private fun loadContent() {
+        val binding = ActivityMainBinding.inflate(layoutInflater)
+
+        setContentView(binding.root)
+
+        gg = GGWeb(this) {
+            with(binding) {
+                send.isEnabled = true
+                recording.isEnabled = true
+                fast.isEnabled = true
+                ultrasound.isEnabled = true
+            }
+        }
+
+        binding.send.setOnClickListener {
+            val message = binding.message.text.toString()
+
+            if (message.isNotBlank()) {
+                binding.recording.isChecked =
+                    false // TODO figure out how this ties into "SDK", as we need to stop recording before sending
+
+                gg.send(message, binding.ultrasound.isChecked, binding.fast.isChecked)
+                motor.addSentMessage(message)
+            }
+        }
+
+        binding.recording.setOnCheckedChangeListener { _, isChecked ->
+            if (isChecked) {
+                gg.startRecording { motor.addReceivedMessage(it) }
+            } else {
+                gg.stopRecording()
+            }
+        }
+
+        val adapter = MainAdapter(layoutInflater)
+
+        binding.transcript.let {
+            it.layoutManager = LinearLayoutManager(this)
+            it.adapter = adapter
+        }
+
+        motor.messages.observe(this) { adapter.submitList(it) }
     }
 
-    val adapter = MainAdapter(layoutInflater)
-
-    binding.transcript.let {
-      it.layoutManager = LinearLayoutManager(this)
-      it.adapter = adapter
-    }
-
-    motor.messages.observe(this) { adapter.submitList(it) }
-  }
-
-  private fun hasAudioPermission() =
-    checkSelfPermission(Manifest.permission.RECORD_AUDIO) == PackageManager.PERMISSION_GRANTED
+    private fun hasAudioPermission() =
+        checkSelfPermission(Manifest.permission.RECORD_AUDIO) == PackageManager.PERMISSION_GRANTED
 }
