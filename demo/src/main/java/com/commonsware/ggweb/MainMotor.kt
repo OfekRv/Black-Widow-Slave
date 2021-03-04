@@ -27,19 +27,19 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 
 data class Message(
-  val text: String,
-  val wasSent: Boolean
+    val text: String,
+    val wasSent: Boolean
 )
 
 class MainMotor : ViewModel() {
-  private val _messages = MutableLiveData<List<Message>>(emptyList())
-  val messages: LiveData<List<Message>> = _messages
+    private val _messages = MutableLiveData<List<Message>>(emptyList())
+    val messages: LiveData<List<Message>> = _messages
 
-  fun addSentMessage(text: String) {
-    _messages.value = messages.value.orEmpty() + Message(text, true)
-  }
+    fun addSentMessage(text: String) {
+        _messages.value = messages.value.orEmpty() + Message(text, true)
+    }
 
-  fun addReceivedMessage(text: String) {
-    _messages.value = messages.value.orEmpty() + Message(text, false)
-  }
+    fun addReceivedMessage(text: String) {
+        _messages.value = messages.value.orEmpty() + Message(text, false)
+    }
 }

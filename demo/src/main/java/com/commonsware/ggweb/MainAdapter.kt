@@ -32,40 +32,40 @@ import com.commonsware.ggweb.databinding.RowReceivedBinding
 import com.commonsware.ggweb.databinding.RowSentBinding
 
 class MainAdapter(private val inflater: LayoutInflater) :
-  ListAdapter<Message, MainAdapter.AbstractMessageHolder>(MESSAGE_DIFFER) {
-  override fun getItemViewType(position: Int) =
-    if (getItem(position).wasSent) R.layout.row_sent else R.layout.row_received
+    ListAdapter<Message, MainAdapter.AbstractMessageHolder>(MESSAGE_DIFFER) {
+    override fun getItemViewType(position: Int) =
+        if (getItem(position).wasSent) R.layout.row_sent else R.layout.row_received
 
-  override fun onCreateViewHolder(parent: ViewGroup, viewType: Int) =
-    if (viewType == R.layout.row_sent) {
-      SentMessageHolder(RowSentBinding.inflate(inflater, parent, false))
-    } else {
-      ReceivedMessageHolder(RowReceivedBinding.inflate(inflater, parent, false))
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int) =
+        if (viewType == R.layout.row_sent) {
+            SentMessageHolder(RowSentBinding.inflate(inflater, parent, false))
+        } else {
+            ReceivedMessageHolder(RowReceivedBinding.inflate(inflater, parent, false))
+        }
+
+    override fun onBindViewHolder(holder: AbstractMessageHolder, position: Int) {
+        holder.bind(getItem(position))
     }
 
-  override fun onBindViewHolder(holder: AbstractMessageHolder, position: Int) {
-    holder.bind(getItem(position))
-  }
-
-  abstract class AbstractMessageHolder(root: View) : RecyclerView.ViewHolder(root) {
-    abstract fun bind(message: Message)
-  }
-
-  class SentMessageHolder(private val binding: RowSentBinding) : AbstractMessageHolder(binding.root) {
-    override fun bind(message: Message) {
-      binding.message.text = message.text
+    abstract class AbstractMessageHolder(root: View) : RecyclerView.ViewHolder(root) {
+        abstract fun bind(message: Message)
     }
-  }
 
-  class ReceivedMessageHolder(private val binding: RowReceivedBinding) : AbstractMessageHolder(binding.root) {
-    override fun bind(message: Message) {
-      binding.message.text = message.text
+    class SentMessageHolder(private val binding: RowSentBinding) : AbstractMessageHolder(binding.root) {
+        override fun bind(message: Message) {
+            binding.message.text = message.text
+        }
     }
-  }
+
+    class ReceivedMessageHolder(private val binding: RowReceivedBinding) : AbstractMessageHolder(binding.root) {
+        override fun bind(message: Message) {
+            binding.message.text = message.text
+        }
+    }
 }
 
 private val MESSAGE_DIFFER = object : DiffUtil.ItemCallback<Message>() {
-  override fun areItemsTheSame(oldItem: Message, newItem: Message) = areContentsTheSame(oldItem, newItem)
+    override fun areItemsTheSame(oldItem: Message, newItem: Message) = areContentsTheSame(oldItem, newItem)
 
-  override fun areContentsTheSame(oldItem: Message, newItem: Message) = oldItem == newItem
+    override fun areContentsTheSame(oldItem: Message, newItem: Message) = oldItem == newItem
 }
