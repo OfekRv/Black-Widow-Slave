@@ -36,6 +36,8 @@ import android.webkit.WebView
 import android.webkit.WebViewClient
 import org.json.JSONObject
 
+private val DEFAULT_MESSAGE_HANDLER: (String) -> Boolean = { false }
+
 /**
  * API for sending and receiving data over sound, by using GGWave's JavaScript API and HTML bindings in a
  * dynamically-constructed WebView.
@@ -55,7 +57,7 @@ class GGWeb(
 ) {
     private var channel: Array<WebMessagePort> = emptyArray()
     private val web: WebView = WebView(context)
-    private var onMessage: (String) -> Unit = {}
+    private var onMessage: (String) -> Boolean = DEFAULT_MESSAGE_HANDLER
 
     init {
         if (!hasPermission(Manifest.permission.RECORD_AUDIO)) {
@@ -111,9 +113,9 @@ class GGWeb(
      * is asynchronous, and the recording will not have begun by the time it returns, though it should shortly
      * thereafter.
      *
-     * @param[onMessage] will be invoked with any received messages while recording is enabled
+     * @param[onMessage] will be invoked with received messages while recording is enabled; return true to keep recording or false to stop
      */
-    fun startRecording(onMessage: (String) -> Unit) {
+    fun startRecording(onMessage: (String) -> Boolean) {
         this.onMessage = onMessage
 
         web.postWebMessage(WebMessage("startRecording"), Uri.EMPTY)
@@ -125,7 +127,7 @@ class GGWeb(
      * the recording will not have stopped by the time it returns, though it should shortly thereafter.
      */
     fun stopRecording() {
-        this.onMessage = {}
+        this.onMessage = DEFAULT_MESSAGE_HANDLER
 
         web.postWebMessage(WebMessage("stopRecording"), Uri.EMPTY)
     }
@@ -137,7 +139,9 @@ class GGWeb(
             override fun onMessage(port: WebMessagePort, message: WebMessage) {
                 Log.d("GGWeb", "received: ${message.data}")
 
-                onMessage(message.data)
+                if (!onMessage(message.data)) {
+                    stopRecording()
+                }
             }
         })
 

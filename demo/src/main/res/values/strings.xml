@@ -5,4 +5,5 @@
   <string name="messageHint">message to send</string>
   <string name="ultrasound">Use Ultrasound</string>
   <string name="fast_mode">Use Fast Mode</string>
+  <string name="oneShot">One-Shot Recording</string>
 </resources>
