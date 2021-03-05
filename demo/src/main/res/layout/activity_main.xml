@@ -50,6 +50,17 @@
     android:checked="false"
     android:enabled="false"
     android:text="@string/receive"
+    app:layout_constraintTop_toTopOf="@id/ultrasound"
+    app:layout_constraintEnd_toEndOf="parent" />
+
+  <androidx.appcompat.widget.SwitchCompat
+    android:id="@+id/oneShot"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_marginBottom="4dp"
+    android:checked="false"
+    android:enabled="false"
+    android:text="@string/oneShot"
     app:layout_constraintTop_toTopOf="@id/fast"
     app:layout_constraintEnd_toEndOf="parent" />
 

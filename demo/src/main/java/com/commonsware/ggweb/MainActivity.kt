@@ -69,10 +69,7 @@ class MainActivity : AppCompatActivity() {
 
         gg = GGWeb(this) {
             with(binding) {
-                send.isEnabled = true
-                recording.isEnabled = true
-                fast.isEnabled = true
-                ultrasound.isEnabled = true
+                listOf(send, recording, fast, ultrasound).forEach { it.isEnabled = true }
             }
         }
 
@@ -90,9 +87,16 @@ class MainActivity : AppCompatActivity() {
 
         binding.recording.setOnCheckedChangeListener { _, isChecked ->
             if (isChecked) {
-                gg.startRecording { motor.addReceivedMessage(it) }
+                binding.oneShot.isEnabled = true
+
+                gg.startRecording {
+                    motor.addReceivedMessage(it)
+                    binding.recording.isChecked = !binding.oneShot.isChecked
+                    !binding.oneShot.isChecked
+                }
             } else {
                 gg.stopRecording()
+                binding.oneShot.isEnabled = false
             }
         }
 
