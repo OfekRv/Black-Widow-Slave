@@ -70,6 +70,7 @@
                 var buffer = context.createBuffer(1, buf.length, context.sampleRate);
                 buffer.getChannelData(0).set(buf);
                 var source = context.createBufferSource();
+                source.addEventListener('ended', onTxEnded);
                 source.buffer = buffer;
                 source.connect(context.destination);
                 source.start(0);
@@ -123,7 +124,7 @@
                             var resampled = e.renderedBuffer.getChannelData(0);
                             var res = ggwave.decode(instance, convertTypedArray(new Float32Array(resampled), Int8Array));
                             if (res) {
-                                port.postMessage(res);
+                                port.postMessage("message:"+res);
                             }
                         };
                     }
@@ -160,6 +161,10 @@
                 } else if (command == "stopRecording") {
                     stopRecording()
                 }
+            }
+
+            function onTxEnded() {
+                port.postMessage("onTxEnded");
             }
         </script>
 </body>

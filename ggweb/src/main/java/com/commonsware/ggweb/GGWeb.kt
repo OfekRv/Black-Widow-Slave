@@ -27,7 +27,6 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.content.pm.PackageManager
 import android.net.Uri
-import android.util.Log
 import android.webkit.PermissionRequest
 import android.webkit.WebChromeClient
 import android.webkit.WebMessage
@@ -53,7 +52,8 @@ private val DEFAULT_MESSAGE_HANDLER: (String) -> Boolean = { false }
 class GGWeb(
     private val context: Context,
     private val htmlLocation: String = "file:///android_asset/ggwave.html",
-    onReady: (GGWeb) -> Unit
+    private val onTxEnded: (GGWeb) -> Unit = {},
+    onReady: (GGWeb) -> Unit = {}
 ) {
     private var channel: Array<WebMessagePort> = emptyArray()
     private val web: WebView = WebView(context)
@@ -137,10 +137,15 @@ class GGWeb(
 
         channel[0].setWebMessageCallback(object : WebMessagePort.WebMessageCallback() {
             override fun onMessage(port: WebMessagePort, message: WebMessage) {
-                Log.d("GGWeb", "received: ${message.data}")
+                val data = message.data
 
-                if (!onMessage(message.data)) {
-                    stopRecording()
+                when {
+                    data.startsWith("message:") -> {
+                        if (!onMessage(data.substring(8))) {
+                            stopRecording()
+                        }
+                    }
+                    data == "onTxEnded" -> onTxEnded(this@GGWeb)
                 }
             }
         })

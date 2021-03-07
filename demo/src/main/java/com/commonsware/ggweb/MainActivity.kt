@@ -26,6 +26,7 @@ import android.Manifest
 import android.annotation.SuppressLint
 import android.content.pm.PackageManager
 import android.os.Bundle
+import android.util.Log
 import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
@@ -67,7 +68,7 @@ class MainActivity : AppCompatActivity() {
 
         setContentView(binding.root)
 
-        gg = GGWeb(this) {
+        gg = GGWeb(this, onTxEnded = ::onTxEnded) {
             with(binding) {
                 listOf(send, recording, fast, ultrasound).forEach { it.isEnabled = true }
             }
@@ -108,6 +109,10 @@ class MainActivity : AppCompatActivity() {
         }
 
         motor.messages.observe(this) { adapter.submitList(it) }
+    }
+
+    private fun onTxEnded(ggWeb: GGWeb) {
+        Log.d("GGWeb", "onTxEnded")
     }
 
     private fun hasAudioPermission() =
