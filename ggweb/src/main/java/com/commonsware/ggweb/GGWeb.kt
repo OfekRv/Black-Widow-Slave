@@ -26,6 +26,7 @@ import android.Manifest
 import android.annotation.SuppressLint
 import android.content.Context
 import android.content.pm.PackageManager
+import android.media.AudioManager
 import android.net.Uri
 import android.webkit.PermissionRequest
 import android.webkit.WebChromeClient
@@ -36,6 +37,7 @@ import android.webkit.WebViewClient
 import org.json.JSONObject
 
 private val DEFAULT_MESSAGE_HANDLER: (String) -> Boolean = { false }
+private const val AUDIO_STREAM = AudioManager.STREAM_MUSIC
 
 /**
  * API for sending and receiving data over sound, by using GGWave's JavaScript API and HTML bindings in a
@@ -52,12 +54,15 @@ private val DEFAULT_MESSAGE_HANDLER: (String) -> Boolean = { false }
 class GGWeb(
     private val context: Context,
     private val htmlLocation: String = "file:///android_asset/ggwave.html",
+    private val autoAdjustVolume: Boolean = false,
     private val onTxEnded: (GGWeb) -> Unit = {},
     onReady: (GGWeb) -> Unit = {}
 ) {
+    private val audioManager: AudioManager = context.getSystemService(Context.AUDIO_SERVICE) as AudioManager
     private var channel: Array<WebMessagePort> = emptyArray()
     private val web: WebView = WebView(context)
     private var onMessage: (String) -> Boolean = DEFAULT_MESSAGE_HANDLER
+    private var lastVolume = audioManager.getStreamVolume(AUDIO_STREAM)
 
     init {
         if (!hasPermission(Manifest.permission.RECORD_AUDIO)) {
@@ -72,7 +77,6 @@ class GGWeb(
             webChromeClient = object : WebChromeClient() {
                 override fun onPermissionRequest(request: PermissionRequest) {
                     request.resources?.forEach {
-
                         when (it) {
                             PermissionRequest.RESOURCE_AUDIO_CAPTURE -> {
                                 request.grant(arrayOf(it))
@@ -104,6 +108,10 @@ class GGWeb(
      */
     fun send(message: String, useUltrasound: Boolean = false, fastMode: Boolean = true) {
         val json = encodeMessage(message, useUltrasound, fastMode)
+
+        lastVolume = audioManager.getStreamVolume(AUDIO_STREAM)
+
+        if (autoAdjustVolume) audioManager.setStreamVolume(AUDIO_STREAM, audioManager.getStreamMaxVolume(AUDIO_STREAM), 0)
 
         web.postWebMessage(WebMessage("send:$json"), Uri.EMPTY)
     }
@@ -145,7 +153,10 @@ class GGWeb(
                             stopRecording()
                         }
                     }
-                    data == "onTxEnded" -> onTxEnded(this@GGWeb)
+                    data == "onTxEnded" -> {
+                        if (autoAdjustVolume) audioManager.setStreamVolume(AUDIO_STREAM, lastVolume, 0)
+                        onTxEnded(this@GGWeb)
+                    }
                 }
             }
         })
