@@ -78,8 +78,7 @@ class MainActivity : AppCompatActivity() {
             val message = binding.message.text.toString()
 
             if (message.isNotBlank()) {
-                binding.recording.isChecked =
-                    false // TODO figure out how this ties into "SDK", as we need to stop recording before sending
+                binding.recording.isChecked = false
 
                 gg.send(message, binding.ultrasound.isChecked, binding.fast.isChecked)
                 motor.addSentMessage(message)
