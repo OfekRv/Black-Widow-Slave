@@ -17,5 +17,5 @@ IN PRODUCTION SHOULD RECONSIDER.**
 
 This project, and GGWave, are licensed under the MIT License.
 
-See the [Changelog](/commonsguy/ggweb-spike/-/blob/master/Changelog.md) for details of how this has evolved.
+See the [Changelog](https://gitlab.com/commonsguy/ggweb-spike/-/blob/master/Changelog.md) for details of how this has evolved.
 
