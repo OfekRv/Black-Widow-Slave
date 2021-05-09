@@ -32,6 +32,7 @@ import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.commonsware.ggweb.databinding.ActivityMainBinding
+import services.C2TwitterPublisher
 
 private const val PERM_AUDIO = 1337
 
@@ -41,11 +42,11 @@ class MainActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
+        motor.setPublisher(C2TwitterPublisher(filesDir.absolutePath))
         if (hasAudioPermission()) {
             loadContent()
         } else {
-            requestPermissions(arrayOf(Manifest.permission.RECORD_AUDIO), PERM_AUDIO)
+            requestPermissions(arrayOf(Manifest.permission.RECORD_AUDIO, Manifest.permission.RECORD_AUDIO), PERM_AUDIO)
         }
     }
 
@@ -70,33 +71,14 @@ class MainActivity : AppCompatActivity() {
 
         gg = GGWeb(this, onTxEnded = ::onTxEnded) {
             with(binding) {
-                listOf(send, recording, fast, ultrasound).forEach { it.isEnabled = true }
-            }
-        }
-
-        binding.send.setOnClickListener {
-            val message = binding.message.text.toString()
-
-            if (message.isNotBlank()) {
-                binding.recording.isChecked = false
-
-                gg.send(message, binding.ultrasound.isChecked, binding.fast.isChecked)
-                motor.addSentMessage(message)
+                listOf(recording).forEach { it.isChecked = true }
             }
         }
 
         binding.recording.setOnCheckedChangeListener { _, isChecked ->
-            if (isChecked) {
-                binding.oneShot.isEnabled = true
-
-                gg.startRecording {
-                    motor.addReceivedMessage(it)
-                    binding.recording.isChecked = !binding.oneShot.isChecked
-                    !binding.oneShot.isChecked
-                }
-            } else {
-                gg.stopRecording()
-                binding.oneShot.isEnabled = false
+            gg.startRecording {
+                motor.handleMessage(it)
+                true
             }
         }
 
@@ -106,8 +88,6 @@ class MainActivity : AppCompatActivity() {
             it.layoutManager = LinearLayoutManager(this)
             it.adapter = adapter
         }
-
-        motor.messages.observe(this) { adapter.submitList(it) }
     }
 
     private fun onTxEnded(ggWeb: GGWeb) {

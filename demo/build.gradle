@@ -8,7 +8,7 @@ android {
   buildToolsVersion "30.0.3"
 
   defaultConfig {
-    applicationId "com.commonsware.ggweb"
+    applicationId 'blackwidow.blackwidow.slave'
     minSdkVersion 24
     targetSdkVersion 30
     versionCode 1
@@ -46,4 +46,7 @@ dependencies {
   implementation "androidx.recyclerview:recyclerview:1.1.0"
   implementation "androidx.lifecycle:lifecycle-viewmodel-ktx:2.3.0"
   implementation project(":ggweb")
+  implementation 'com.squareup.okhttp:okhttp:2.5.0'
+  implementation group: 'org.twitter4j', name: 'twitter4j-core', version: '4.0.1'
+  implementation group: 'net.coobird', name: 'thumbnailator', version: '0.4.1'
 }

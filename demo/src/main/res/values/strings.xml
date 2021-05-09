@@ -1,5 +1,5 @@
 <resources>
-  <string name="app_name">GGWeb</string>
+  <string name="app_name">BlackWidowSlave</string>
   <string name="send">Send</string>
   <string name="receive">Receive Enabled</string>
   <string name="messageHint">message to send</string>

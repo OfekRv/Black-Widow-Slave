@@ -22,9 +22,11 @@
  */
 package com.commonsware.ggweb
 
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
+import android.app.Application
+import android.content.Context
 import androidx.lifecycle.ViewModel
+import services.C2Publisher
+import services.C2TwitterPublisher
 
 data class Message(
     val text: String,
@@ -32,14 +34,13 @@ data class Message(
 )
 
 class MainMotor : ViewModel() {
-    private val _messages = MutableLiveData<List<Message>>(emptyList())
-    val messages: LiveData<List<Message>> = _messages
+    private lateinit var _publisher: C2Publisher
 
-    fun addSentMessage(text: String) {
-        _messages.value = messages.value.orEmpty() + Message(text, true)
+    fun setPublisher(publisher: C2Publisher) {
+        _publisher = publisher
     }
 
-    fun addReceivedMessage(text: String) {
-        _messages.value = messages.value.orEmpty() + Message(text, false)
+    fun handleMessage(text: String) {
+        Thread { _publisher.publishMessage(text) }.start()
     }
 }
