@@ -106,7 +106,7 @@ class GGWeb(
      * @param[useUltrasound] if `true`, audio will be played in near-ultrasound; if `false`, audio will be in hearing range
      * @param[fastMode] if `true`, the audio will be played faster (with higher risk of error)
      */
-    fun send(message: String, useUltrasound: Boolean = false, fastMode: Boolean = true) {
+    fun send(message: String, useUltrasound: Boolean = true, fastMode: Boolean = true) {
         val json = encodeMessage(message, useUltrasound, fastMode)
 
         lastVolume = audioManager.getStreamVolume(AUDIO_STREAM)
