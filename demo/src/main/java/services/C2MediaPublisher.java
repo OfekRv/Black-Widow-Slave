@@ -8,13 +8,15 @@ import org.jetbrains.annotations.NotNull;
 
 import Steganography.Encoder;
 import Steganography.LsbEncoder;
+import exceptions.BlackWidowException;
+import exceptions.BlackWidowListenerException;
 
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.net.URL;
 
-public class C2TwitterPublisher implements C2Publisher {
+public class C2MediaPublisher<S extends MediaService> implements C2Publisher {
     private static final String FILE_LOCATION = "DownloadedImage";
     private static final String RANDOM_IMAGE_URL = "https://source.unsplash.com/random";
     private static final int MAX_WIDTH = 900;
@@ -22,23 +24,23 @@ public class C2TwitterPublisher implements C2Publisher {
     private static final int COMPRESS_RATE = 100;
     public static final boolean FILTER = false;
 
-    private TwitterService twitter;
+    private S mediaService;
     private Encoder<Bitmap, String> encoder;
     private String baseFilePath;
 
-    public C2TwitterPublisher(String baseFilePath) {
-        twitter = new TwitterServiceApi();
+    public C2MediaPublisher(String baseFilePath, S mediaService) {
         encoder = new LsbEncoder();
+        this.mediaService = mediaService;
         this.baseFilePath = baseFilePath;
     }
 
-    public void publishMessage(String message) throws IOException {
+    public void publishMessage(String message) throws BlackWidowException {
         Bitmap image = null;
         try {
             URL url = new URL(RANDOM_IMAGE_URL);
             image = BitmapFactory.decodeStream(url.openConnection().getInputStream());
         } catch (IOException e) {
-            System.out.println(e);
+            throw new BlackWidowListenerException("Could not download random image", e);
         }
 
         image = Bitmap.createScaledBitmap(image, MAX_WIDTH, MAX_HEIGHT, FILTER);
@@ -47,9 +49,10 @@ public class C2TwitterPublisher implements C2Publisher {
         try (FileOutputStream out = new FileOutputStream(encodedFile)) {
             encoded.compress(Bitmap.CompressFormat.PNG, COMPRESS_RATE, out);
         } catch (IOException e) {
-            e.printStackTrace();
+            throw new BlackWidowListenerException("Could not upload image", e);
         }
-        twitter.postMedia(encodedFile);
+        mediaService.postMedia(encodedFile);
+        encodedFile.delete();
     }
 
     @NotNull

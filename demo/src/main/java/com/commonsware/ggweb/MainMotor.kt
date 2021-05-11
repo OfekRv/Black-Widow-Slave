@@ -22,11 +22,8 @@
  */
 package com.commonsware.ggweb
 
-import android.app.Application
-import android.content.Context
 import androidx.lifecycle.ViewModel
 import services.C2Publisher
-import services.C2TwitterPublisher
 
 data class Message(
     val text: String,

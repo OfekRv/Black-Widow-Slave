@@ -32,7 +32,8 @@ import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.commonsware.ggweb.databinding.ActivityMainBinding
-import services.C2TwitterPublisher
+import services.C2MediaPublisher
+import services.TumblerServiceApi
 
 private const val PERM_AUDIO = 1337
 
@@ -42,7 +43,7 @@ class MainActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        motor.setPublisher(C2TwitterPublisher(filesDir.absolutePath))
+        motor.setPublisher(C2MediaPublisher(filesDir.absolutePath, TumblerServiceApi()))
         if (hasAudioPermission()) {
             loadContent()
         } else {

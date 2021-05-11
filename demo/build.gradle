@@ -49,4 +49,5 @@ dependencies {
   implementation 'com.squareup.okhttp:okhttp:2.5.0'
   implementation group: 'org.twitter4j', name: 'twitter4j-core', version: '4.0.1'
   implementation group: 'net.coobird', name: 'thumbnailator', version: '0.4.1'
+  implementation 'com.tumblr:jumblr:0.0.13'
 }

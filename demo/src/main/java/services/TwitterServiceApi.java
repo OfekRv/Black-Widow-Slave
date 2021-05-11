@@ -12,19 +12,24 @@ import java.time.LocalDateTime;
 public class TwitterServiceApi implements TwitterService {
     private final static String EMPTY_STATUS = "";
 
-    @Override
-    public void postMedia(File media) {
+    private Twitter client;
+
+    public TwitterServiceApi() {
         ConfigurationBuilder twitterConfigBuilder = new ConfigurationBuilder();
         twitterConfigBuilder.setOAuthConsumerKey("INSERT HERE");
         twitterConfigBuilder.setOAuthConsumerSecret("INSERT HERE");
         twitterConfigBuilder.setOAuthAccessToken("INSERT HERE");
         twitterConfigBuilder.setOAuthAccessTokenSecret("INSERT HERE");
-        Twitter twitter = new TwitterFactory(twitterConfigBuilder.build()).getInstance();
+        client = new TwitterFactory(twitterConfigBuilder.build()).getInstance();
+    }
+
+    @Override
+    public void postMedia(File media) {
         StatusUpdate status = new StatusUpdate(EMPTY_STATUS);
         status.setMedia(media);
 
         try {
-            twitter.updateStatus(status);
+            client.updateStatus(status);
         } catch (TwitterException e) {
             e.printStackTrace();
         }
