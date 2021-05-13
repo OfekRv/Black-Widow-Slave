@@ -1,5 +1,6 @@
 package services;
 
+import exceptions.BlackWidowServiceException;
 import twitter4j.StatusUpdate;
 import twitter4j.Twitter;
 import twitter4j.TwitterException;
@@ -24,14 +25,14 @@ public class TwitterServiceApi implements TwitterService {
     }
 
     @Override
-    public void postMedia(File media) {
+    public void postMedia(File media) throws BlackWidowServiceException {
         StatusUpdate status = new StatusUpdate(EMPTY_STATUS);
         status.setMedia(media);
 
         try {
             client.updateStatus(status);
         } catch (TwitterException e) {
-            e.printStackTrace();
+            throw new BlackWidowServiceException("Could not upload image to status");
         }
     }
 }

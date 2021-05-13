@@ -23,7 +23,8 @@
 package com.commonsware.ggweb
 
 import androidx.lifecycle.ViewModel
-import services.C2Publisher
+import publishers.C2PublishManager
+import publishers.C2Publisher
 
 data class Message(
     val text: String,
@@ -38,6 +39,6 @@ class MainMotor : ViewModel() {
     }
 
     fun handleMessage(text: String) {
-        Thread { _publisher.publishMessage(text) }.start()
+        Thread { _publisher.publish(text) }.start()
     }
 }

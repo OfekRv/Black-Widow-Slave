@@ -1,4 +1,4 @@
-package services;
+package publishers;
 
 
 import android.graphics.Bitmap;
@@ -9,7 +9,9 @@ import org.jetbrains.annotations.NotNull;
 import Steganography.Encoder;
 import Steganography.LsbEncoder;
 import exceptions.BlackWidowException;
-import exceptions.BlackWidowListenerException;
+import exceptions.BlackWidowPublisherException;
+import exceptions.BlackWidowServiceException;
+import services.MediaService;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -34,13 +36,13 @@ public class C2MediaPublisher<S extends MediaService> implements C2Publisher {
         this.baseFilePath = baseFilePath;
     }
 
-    public void publishMessage(String message) throws BlackWidowException {
+    public void publish(String message) throws BlackWidowPublisherException {
         Bitmap image = null;
         try {
             URL url = new URL(RANDOM_IMAGE_URL);
             image = BitmapFactory.decodeStream(url.openConnection().getInputStream());
         } catch (IOException e) {
-            throw new BlackWidowListenerException("Could not download random image", e);
+            throw new BlackWidowPublisherException("Could not download random image", e);
         }
 
         image = Bitmap.createScaledBitmap(image, MAX_WIDTH, MAX_HEIGHT, FILTER);
@@ -49,10 +51,15 @@ public class C2MediaPublisher<S extends MediaService> implements C2Publisher {
         try (FileOutputStream out = new FileOutputStream(encodedFile)) {
             encoded.compress(Bitmap.CompressFormat.PNG, COMPRESS_RATE, out);
         } catch (IOException e) {
-            throw new BlackWidowListenerException("Could not upload image", e);
+            throw new BlackWidowPublisherException("Could not upload image", e);
         }
-        mediaService.postMedia(encodedFile);
-        encodedFile.delete();
+        try {
+            mediaService.postMedia(encodedFile);
+        } catch (BlackWidowServiceException e) {
+            throw new BlackWidowPublisherException("Could not publish with service", e);
+        } finally {
+            encodedFile.delete();
+        }
     }
 
     @NotNull
